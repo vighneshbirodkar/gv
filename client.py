@@ -15,8 +15,8 @@ def euclideanDistance(x1, y1, x2, y2):
 def get_move():
 
     if (US == 2) and (moves_played == N):
-        spacing_x = BOARD_X / (SPACING_FACTOR * 5)
-        spacing_y = BOARD_Y / (SPACING_FACTOR * 5)
+        spacing_x = BOARD_X / (SPACING_FACTOR * 3)
+        spacing_y = BOARD_Y / (SPACING_FACTOR * 3)
     else:
         spacing_x = BOARD_X / SPACING_FACTOR
         spacing_y = BOARD_Y / SPACING_FACTOR
@@ -65,24 +65,24 @@ def get_candidate(candidates, stones):
 
     # If this is the last move, make a deeper search around the best candidate to win
     if (US == 2) and (moves_played == N) and (best_difference < 0):
-        target_candidates = len(candidates) / 2
+        target_candidates = len(candidates)
         candidates = []
         box_size_x = BOARD_X / 10
         box_size_y = BOARD_Y / 10
-        for i in range(len(target_candidates)):
-            randomI = random.randint(closest[0] - box_size_x, closest[0] + box_size_x)
-            randomJ = random.randint(closest[1] - box_size_y, closest[1] + box_size_y)
+        for i in range(target_candidates):
+            randomI = random.randint(best_candidate[0] - box_size_x, best_candidate[0] + box_size_x)
+            randomJ = random.randint(best_candidate[1] - box_size_y, best_candidate[1] + box_size_y)
 
             if is_move_valid(randomI, randomJ, stones):
                 candidates.append((randomI, randomJ))
 
         # Re-evaluate among these candidates
         scores = parallel_get_best_candidate_wrapper(candidates)
-        for i in range(len(candidates)):
+        for i in range(target_candidates):
             (u, t) = scores[i]
             difference = u - t
-            if difference > 0:
-                print('Winning local random found', candidates[i], 'Difference', best_difference)
+            if difference >= 0:
+                print('Acceptable local random found', candidates[i], 'Difference', best_difference)
                 return candidates[i]
 
         # Return something
